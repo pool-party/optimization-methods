@@ -8,6 +8,7 @@ Contracts:
 
 fibonaccis = {}
 
+
 def fibonacci(n):
     global fibonaccis
 
@@ -22,8 +23,8 @@ def fibonacci(n):
     return result
 
 
-def dichtomy_method(f, ai, bi, epsilon, iterations=0, evaluations=0):
-    print(f'dichotomy > [{ai}, {bi}]')
+def dichotomy_method(f, ai, bi, epsilon, iterations=0, evaluations=0):
+    # print(f'dichotomy > [{ai}, {bi}]')
     if bi - ai < 2 * epsilon:
         return ai, iterations, evaluations
 
@@ -35,14 +36,14 @@ def dichtomy_method(f, ai, bi, epsilon, iterations=0, evaluations=0):
     x2 = middle + delta
 
     if f(x1) > f(x2):
-        return dichtomy_method(f, x1, bi, epsilon, iterations + 1, evaluations + 2)
+        return dichotomy_method(f, x1, bi, epsilon, iterations + 1, evaluations + 2)
     else:
-        return dichtomy_method(f, ai, x2, epsilon, iterations + 1, evaluations + 2)
+        return dichotomy_method(f, ai, x2, epsilon, iterations + 1, evaluations + 2)
 
 
 def golden_ratio_method(f, ai, bi, epsilon):
     def golden_ratio_method_helper(ai, bi, x1, fx1, iterations=0, evaluations=0):
-        print(f'golden   > [{ai}, {bi}]')
+        # print(f'golden   > [{ai}, {bi}]')
         if bi - ai < 2 * epsilon:
             return ai, iterations, evaluations
 
@@ -63,7 +64,7 @@ def golden_ratio_method(f, ai, bi, epsilon):
 
 def fibonacci_method(f, ai, bi, epsilon):
     def fibonacci_method_helper(ai, bi, n, xprev, fprev, flag, iterations=0, evaluations=0):
-        print(f'fibonacci> [{ai}, {bi}]')
+        # print(f'fibonacci> [{ai}, {bi}]')
 
         if bi - ai < epsilon or n == 1:
             return ai, iterations, evaluations
@@ -89,7 +90,7 @@ def fibonacci_method(f, ai, bi, epsilon):
     while fibonacci(n) < lower_bound:
         n += 1
 
-    print(f'fibonacci> found n: {n}')
+    # print(f'fibonacci> found n: {n}')
 
     xprev = ai + fibonacci(n) * (bi - ai) / fibonacci(n + 2)
 
