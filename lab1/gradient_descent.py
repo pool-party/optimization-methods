@@ -49,16 +49,7 @@ def linear_step_chooser(method):
 
         left_border = 0.
         right_border = line_search(linear_optimization_problem, left_border)
-        answer, _ = method(linear_optimization_problem, left_border, right_border)
+        answer, _, _ = method(linear_optimization_problem, left_border, right_border)
         return answer
 
     return result
-
-
-def main():
-    print(0.)
-    print(.0)
-
-
-if __name__ == "__main__":
-    main()
