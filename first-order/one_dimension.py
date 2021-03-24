@@ -3,9 +3,10 @@ from math import sqrt
 
 """
 Contracts:
-  - f is continious
+  - f is continuous
   - f is unimodal
 """
+
 
 def fibonacci(n):
     global fibonaccis
@@ -20,10 +21,11 @@ def fibonacci(n):
     fibonaccis[n] = result
     return result
 
+
 def dichtomy_method(f, ai, bi, epsilon, iterations=0, evaluations=0):
-    print(f'dichtomy > [{ai}, {bi}]')
+    print(f'dichotomy > [{ai}, {bi}]')
     if bi - ai < 2 * epsilon:
-        return (ai, iterations, evaluations)
+        return ai, iterations, evaluations
 
     # delta < epsilon / 2
     delta = epsilon / 2.5
@@ -37,11 +39,12 @@ def dichtomy_method(f, ai, bi, epsilon, iterations=0, evaluations=0):
     else:
         return dichtomy_method(f, ai, x2, epsilon, iterations + 1, evaluations + 2)
 
+
 def golden_ratio_method(f, ai, bi, epsilon):
     def golden_ratio_method_helper(ai, bi, x1, fx1, iterations=0, evaluations=0):
         print(f'golden   > [{ai}, {bi}]')
         if bi - ai < 2 * epsilon:
-            return (ai, iterations, evaluations)
+            return ai, iterations, evaluations
 
         x2 = ai + bi - x1
         fx2 = f(x2)
@@ -57,12 +60,13 @@ def golden_ratio_method(f, ai, bi, epsilon):
     x1 = ai + (3 - sqrt(5)) * (bi - ai) / 2
     return golden_ratio_method_helper(ai, bi, x1, f(x1), 0, 1)
 
+
 def fibonacci_method(f, ai, bi, epsilon):
     def fibonacci_method_helper(ai, bi, n, xprev, fprev, flag, iterations=0, evaluations=0):
         print(f'fibonacci> [{ai}, {bi}]')
 
         if bi - ai < epsilon or n == 1:
-            return (ai, iterations, evaluations)
+            return ai, iterations, evaluations
 
         if flag:
             x1 = xprev
@@ -91,6 +95,7 @@ def fibonacci_method(f, ai, bi, epsilon):
 
     return fibonacci_method_helper(ai, bi, n, xprev, f(xprev), True, 0, 1)
 
+
 def compare(f, a, b, epsilon):
     def get_results(name, method):
         (result, iterations, evaluations) = method(f, a, b, epsilon)
@@ -106,6 +111,7 @@ def compare(f, a, b, epsilon):
     ]
 
     print("\n" + AsciiTable(table).table)
+
 
 if __name__ == "__main__":
     fibonaccis = {}
