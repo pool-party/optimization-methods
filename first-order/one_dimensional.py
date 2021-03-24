@@ -1,4 +1,3 @@
-from terminaltables import AsciiTable
 from math import sqrt
 
 """
@@ -7,6 +6,7 @@ Contracts:
   - f is unimodal
 """
 
+fibonaccis = {}
 
 def fibonacci(n):
     global fibonaccis
@@ -94,26 +94,3 @@ def fibonacci_method(f, ai, bi, epsilon):
     xprev = ai + fibonacci(n) * (bi - ai) / fibonacci(n + 2)
 
     return fibonacci_method_helper(ai, bi, n, xprev, f(xprev), True, 0, 1)
-
-
-def compare(f, a, b, epsilon):
-    def get_results(name, method):
-        (result, iterations, evaluations) = method(f, a, b, epsilon)
-        return [name, f'{result:0.10f}', str(iterations), str(evaluations)]
-
-    print(f'Computing f on [{a}, {b}] with epsilon = {epsilon}:\n')
-
-    table = [
-        ["method name", "result", "iterations", "evaluations"],
-        get_results("dichtomy", dichtomy_method),
-        get_results("golden ratio", golden_ratio_method),
-        get_results("fibonacci", fibonacci_method)
-    ]
-
-    print("\n" + AsciiTable(table).table)
-
-
-if __name__ == "__main__":
-    fibonaccis = {}
-    compare(lambda x: 100 * ((x - x ** 2) ** 2) + ((1. - x) ** 2), 0.6, 1.2, 1e-8)
-    compare(lambda x: (x - 1) ** 2 + 10, -10000, 10000, 1e-8)
