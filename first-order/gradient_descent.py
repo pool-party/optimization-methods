@@ -1,12 +1,14 @@
 import numpy as np
+from tqdm import tqdm
 
 
-def gradient_descent(f, f_grad, start_arg, method, step=None, max_iterations=10000, eps=1e-5):
+def gradient_descent(f, f_grad, start_arg, method, criterion=1, step=None, max_iterations=10000, eps=1e-5):
     cur_arg = start_arg
     trace = [cur_arg]
-    for _ in range(max_iterations):
+    for _ in tqdm(range(max_iterations)):
         #         cur_arg = float(ceil(cur_arg))
         cur_grad = f_grad(cur_arg)
+        cur_value = f(cur_arg)
         #         cur_grad = float(ceil(f_grad(cur_arg)))
         #         print(cur_arg, cur_grad)
         left_border = 1e-8
@@ -18,12 +20,15 @@ def gradient_descent(f, f_grad, start_arg, method, step=None, max_iterations=100
             cur_step = step
         #         print(cur_step)
         next_arg = cur_arg - cur_step * cur_grad
+        next_value = f(next_arg)
         trace.append(next_arg)
 
-        # if np.linalg.norm(next_arg - cur_arg):
-        # if abs(next_value - cur_value) < eps:
-        if np.linalg.norm(cur_grad) < eps:
+        if criterion == 1 and np.linalg.norm(next_arg - cur_arg) < eps:
             return trace  # answer is trace[-1]
+        elif criterion == 2 and abs(next_value - cur_value) < eps:
+            return trace
+        elif criterion == 3 and np.linalg.norm(cur_grad) < eps:
+            return trace
         cur_arg = next_arg
     return trace
 
