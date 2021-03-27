@@ -2,10 +2,10 @@ import numpy as np
 from tqdm import tqdm
 
 
-def gradient_descent(f, f_grad, start_arg, method, criterion=1, step=None, max_iterations=10000, eps=1e-5):
+def gradient_descent(f, f_grad, start_arg, method, pb=False, criterion=1, step=None, max_iterations=10000, eps=1e-5):
     cur_arg = start_arg
     trace = [cur_arg]
-    for _ in tqdm(range(max_iterations)):
+    for _ in (tqdm(range(max_iterations)) if pb else range(max_iterations)):
         #         cur_arg = float(ceil(cur_arg))
         cur_grad = f_grad(cur_arg)
         cur_value = f(cur_arg)
