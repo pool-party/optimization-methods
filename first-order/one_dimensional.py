@@ -6,92 +6,125 @@ Contracts:
   - f is unimodal
 """
 
-fibonaccis = {}
+def log(verbose_flag, value):
+    if verbose_flag:
+        print(value)
 
+def dichotomy_method(f, left, right, epsilon, verbose=False):
 
-def fibonacci(n):
-    global fibonaccis
-
-    if n in fibonaccis:
-        return fibonaccis[n]
-
-    if n < 2:
-        return 1
-
-    result = fibonacci(n - 1) + fibonacci(n - 2)
-    fibonaccis[n] = result
-    return result
-
-
-def dichotomy_method(f, ai, bi, epsilon, iterations=0, evaluations=0):
-    # print(f'dichotomy > [{ai}, {bi}]')
-    if bi - ai < 2 * epsilon:
-        return ai, iterations, evaluations
+    iterations = 0
+    evaluations = 0
 
     # delta < epsilon / 2
     delta = epsilon / 2.5
 
-    middle = (ai + bi) / 2
-    x1 = middle - delta
-    x2 = middle + delta
+    while right - left >= 2 * epsilon:
+        log(verbose, f'dichotomy > [{left}, {right}]')
 
-    if f(x1) > f(x2):
-        return dichotomy_method(f, x1, bi, epsilon, iterations + 1, evaluations + 2)
-    else:
-        return dichotomy_method(f, ai, x2, epsilon, iterations + 1, evaluations + 2)
+        middle = (left + right) / 2
+        x1 = middle - delta
+        x2 = middle + delta
 
+        if f(x1) > f(x2):
+            log(verbose, (right - x1) / (right - left))
+            left = x1
+        else:
+            log(verbose, (x2 - left) / (right - left))
+            right = x2
 
-def golden_ratio_method(f, ai, bi, epsilon):
-    def golden_ratio_method_helper(ai, bi, x1, fx1, iterations=0, evaluations=0):
-        # print(f'golden   > [{ai}, {bi}]')
-        if bi - ai < 2 * epsilon:
-            return ai, iterations, evaluations
+        iterations += 1
+        evaluations += 2
 
-        x2 = ai + bi - x1
-        fx2 = f(x2)
+    return left, iterations, evaluations
+
+def golden_ratio_method(f, left, right, epsilon, verbose=False):
+
+    GOLDEN_CONSTANT = (3 - sqrt(5)) / 2
+    x1 = left + GOLDEN_CONSTANT * (right - left)
+    x2 = right - GOLDEN_CONSTANT * (right - left)
+    f1, f2 = f(x1), f(x2)
+
+    iterations = 0
+    evaluations = 1
+
+    while right - left >= 2 * epsilon:
+        log(verbose, f'golden ratio> [{left}, {right}]')
+
+        x2 = left + right - x1
+        f2 = f(x2)
         if x1 > x2:
             x1, x2 = x2, x1
-            fx1, fx2 = fx2, fx1
-
-        if fx1 > fx2:
-            return golden_ratio_method_helper(x1, bi, x2, fx2, iterations + 1, evaluations + 1)
-        else:
-            return golden_ratio_method_helper(ai, x2, x1, fx1, iterations + 1, evaluations + 1)
-
-    x1 = ai + (3 - sqrt(5)) * (bi - ai) / 2
-    return golden_ratio_method_helper(ai, bi, x1, f(x1), 0, 1)
-
-
-def fibonacci_method(f, ai, bi, epsilon):
-    def fibonacci_method_helper(ai, bi, n, xprev, fprev, flag, iterations=0, evaluations=0):
-        # print(f'fibonacci> [{ai}, {bi}]')
-
-        if bi - ai < epsilon or n == 1:
-            return ai, iterations, evaluations
-
-        if flag:
-            x1 = xprev
-            x2 = ai + fibonacci(n + 1) * (bi - ai) / fibonacci(n + 2)
-            f1 = fprev
-            f2 = f(x2)
-        else:
-            x1 = ai + fibonacci(n) * (bi - ai) / fibonacci(n + 2)
-            x2 = xprev
-            f1 = f(x1)
-            f2 = fprev
+            f1, f2 = f2, f1
 
         if f1 > f2:
-            return fibonacci_method_helper(x1, bi, n - 1, x2, f2, True, iterations + 1, evaluations + 1)
+            log(verbose, (right - x1) / (right - left))
+            left = x1
+            x1, f1 = x2, f2
+            x2 = right - GOLDEN_CONSTANT * (right - left)
+            f2 = f(x2)
         else:
-            return fibonacci_method_helper(ai, x2, n - 1, x1, f1, False, iterations + 1, evaluations + 1)
+            log(verbose, (x2 - left) / (right - left))
+            right = x2
+            x2, f2 = x1, f1
+            x1 = left + GOLDEN_CONSTANT * (right - left)
+            f1 = f(x1)
 
-    lower_bound = (bi - ai) / epsilon
+        iterations += 1
+        evaluations += 1
+
+    return left, iterations, evaluations
+
+
+fibonaccis = {}
+
+
+def fibonacci_method(f, left, right, epsilon, verbose=False):
+
+    def fibonacci(n):
+        global fibonaccis
+
+        if n in fibonaccis:
+            return fibonaccis[n]
+
+        if n < 2:
+            return 1
+
+        result = fibonacci(n - 1) + fibonacci(n - 2)
+        fibonaccis[n] = result
+        return result
+
+    lower_bound = (right - left) / epsilon
     n = 2
     while fibonacci(n) < lower_bound:
         n += 1
 
-    # print(f'fibonacci> found n: {n}')
+    log(verbose, f'found fibonacci[{n}] = {fibonacci(n)}')
 
-    xprev = ai + fibonacci(n) * (bi - ai) / fibonacci(n + 2)
+    x1 = left + fibonacci(n) * (right - left) / fibonacci(n + 2)
+    x2 = left + fibonacci(n + 1) * (right - left) / fibonacci(n + 2)
+    f1, f2 = f(x1), f(x2)
 
-    return fibonacci_method_helper(ai, bi, n, xprev, f(xprev), True, 0, 1)
+    iterations = 0
+    evaluations = 1
+
+    while n > -2:
+        log(verbose, f'fibonacci> [{left}, {right}]')
+
+        if f1 > f2:
+            log(verbose, (right - x1) / (right - left))
+            left = x1
+            x1, f1 = x2, f2
+            x2 = left + (fibonacci(n + 1) / fibonacci(n + 2)) * (right - left)
+            f2 = f(x2)
+        else:
+            log(verbose, (x2 - left) / (right - left))
+            right = x2
+            x2, f2 = x1, f1
+            x1 = left + (fibonacci(n) / fibonacci(n + 2)) * (right - left)
+            f1 = f(x1)
+
+        n -= 1
+        iterations += 1
+        evaluations += 1
+
+    return left, iterations, evaluations
