@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def newton(f, f_g, f_h, x0, criterion, eps=1e-5, max_iters=1000):
     x = x0
     f_x = f(x)
@@ -13,10 +14,10 @@ def newton(f, f_g, f_h, x0, criterion, eps=1e-5, max_iters=1000):
         f_x1 = f(x1)
         trace.append(x1)
 
-        if  len(trace) == max_iters or \
-            (criterion == 1 and np.linalg.norm(x1 - x) < eps) or \
-            (criterion == 2 and abs(f_x1 - f_x) < eps) or \
-            (criterion == 3 and np.linalg.norm(delta) < eps):
+        if len(trace) == max_iters or \
+                (criterion == 1 and np.linalg.norm(x1 - x) < eps) or \
+                (criterion == 2 and abs(f_x1 - f_x) < eps) or \
+                (criterion == 3 and np.linalg.norm(delta) < eps):
             return trace
 
         x = x1
