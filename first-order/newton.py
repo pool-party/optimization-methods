@@ -1,10 +1,11 @@
 import numpy as np
+import psutil
 
 
-def newton(f, f_g, f_h, x0, criterion, eps=1e-5, max_iters=1000):
+def newton(f, f_g, f_h, x0, criterion, eps=1e-5, max_iters=1000, ram_instead=False):
     x = x0
     f_x = f(x)
-    trace = [x]
+    trace = [x  if not ram_instead else psutil.virtual_memory().used / 1024 / 1024]
     while True:
         f_g_x = f_g(x)
         f_h_x = f_h(x)
@@ -12,7 +13,7 @@ def newton(f, f_g, f_h, x0, criterion, eps=1e-5, max_iters=1000):
         delta = np.matmul(f_g_x, f_h_inv)
         x1 = x - delta
         f_x1 = f(x1)
-        trace.append(x1)
+        trace.append(x1  if not ram_instead else psutil.virtual_memory().used / 1024 / 1024)
 
         if len(trace) == max_iters or \
                 (criterion == 1 and np.linalg.norm(x1 - x) < eps) or \

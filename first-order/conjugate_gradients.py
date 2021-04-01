@@ -1,10 +1,11 @@
 import numpy as np
 from tqdm import tqdm
+import psutil
 
 
-def conjugate_gradients_method(f, f_grad, start_arg, method, pb=False, criterion=1, step=None, max_iterations=10000, eps=1e-5):
+def conjugate_gradients_method(f, f_grad, start_arg, method, pb=False, criterion=1, step=None, max_iterations=10000, eps=1e-5, ram_instead=False):
     cur_arg = start_arg
-    trace = [cur_arg]
+    trace = [cur_arg if not ram_instead else psutil.virtual_memory().used / 1024 / 1024]
     grad_list = []
     prev_p = None
     beta = None
@@ -27,7 +28,7 @@ def conjugate_gradients_method(f, f_grad, start_arg, method, pb=False, criterion
             cur_step = step
         next_arg = cur_arg - cur_step * p
         next_value = f(next_arg)
-        trace.append(next_arg)
+        trace.append(next_arg  if not ram_instead else psutil.virtual_memory().used / 1024 / 1024)
 
         if criterion == 1 and np.linalg.norm(next_arg - cur_arg) < eps:
             return trace
