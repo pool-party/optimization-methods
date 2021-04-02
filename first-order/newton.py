@@ -9,8 +9,7 @@ def newton(f, f_g, f_h, x0, criterion, eps=1e-5, max_iters=1000, ram_instead=Fal
     while True:
         f_g_x = f_g(x)
         f_h_x = f_h(x)
-        f_h_inv = np.linalg.inv(f_h_x)
-        delta = np.matmul(f_g_x, f_h_inv)
+        delta = np.matmul(f_g_x, np.linalg.inv(f_h_x))
         x1 = x - delta
         f_x1 = f(x1)
         trace.append(x1  if not ram_instead else psutil.virtual_memory().used / 1024 / 1024)
