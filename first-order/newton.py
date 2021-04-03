@@ -1,5 +1,4 @@
 import numpy as np
-import psutil
 
 
 def newton(f, f_g, f_h, x0, criterion, eps=1e-5, max_iters=1000, ram_instead=False):
