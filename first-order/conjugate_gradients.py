@@ -3,19 +3,24 @@ from tqdm import tqdm
 import psutil
 
 
-def conjugate_gradients_method(f, f_grad, start_arg, method, pb=False, criterion=1, step=None, max_iterations=10000, eps=1e-5, ram_instead=False):
+def conjugate_gradients_method(f, f_grad, start_arg, method, pb=False, criterion=1, step=None, max_iterations=10000,
+                               eps=1e-5, ram_instead=False):
     cur_arg = start_arg
     trace = [cur_arg if not ram_instead else psutil.virtual_memory().used / 1024 / 1024]
     grad_list = []
     prev_p = None
     beta = None
     not_first_launch = False
-    for _ in (tqdm(range(max_iterations)) if pb else range(max_iterations)):
+    for i in (tqdm(range(max_iterations)) if pb else range(max_iterations)):
         cur_grad = f_grad(cur_arg)
+        if criterion == 3 and np.linalg.norm(cur_grad) < eps:
+            return trace
         grad_list.append(cur_grad)
-        p = cur_grad
+        p = -cur_grad
         if not_first_launch:
             beta = (grad_list[-1] * grad_list[-1]) / (grad_list[-2] * grad_list[-2])
+        if i % len(cur_arg) == 0:
+            beta = None
         if beta is not None:
             p += beta * prev_p
         cur_value = f(cur_arg)
@@ -26,15 +31,13 @@ def conjugate_gradients_method(f, f_grad, start_arg, method, pb=False, criterion
             cur_step, _, _ = method(lambda step: f(cur_arg - step * cur_grad), left_border, right_border, eps)
         else:
             cur_step = step
-        next_arg = cur_arg - cur_step * p
+        next_arg = cur_arg + cur_step * p
         next_value = f(next_arg)
-        trace.append(next_arg  if not ram_instead else psutil.virtual_memory().used / 1024 / 1024)
+        trace.append(next_arg if not ram_instead else psutil.virtual_memory().used / 1024 / 1024)
 
         if criterion == 1 and np.linalg.norm(next_arg - cur_arg) < eps:
             return trace
         elif criterion == 2 and abs(next_value - cur_value) < eps:
-            return trace
-        elif criterion == 3 and np.linalg.norm(cur_grad) < eps:
             return trace
         cur_arg = next_arg
         prev_p = p
