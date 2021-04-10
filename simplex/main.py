@@ -13,6 +13,7 @@ def matrix(system, results, c):
         less_or_equals(i, width)
 
     width = len(system[0][0])
+    init_dim = width
     length = len(results)
 
     system = [(row + [0 for _ in range(length)], compare) for row, compare in system]
@@ -31,7 +32,7 @@ def matrix(system, results, c):
 
         width += 1
 
-    return system, results, c
+    return system, results, c, init_dim
 
 test_cases = [matrix(system, results, c) for system, results, c in
     [
@@ -141,7 +142,7 @@ test_cases = [matrix(system, results, c) for system, results, c in
 ]
 
 if __name__ == '__main__':
-    for matrix, results, c in test_cases:
+    for matrix, results, c, dim in test_cases:
         matrix = np.array(matrix)
         results = np.array(results)
-        print(find_minimum(matrix, results, c))
+        print(find_minimum(matrix, results, c)[:dim])
